@@ -1,5 +1,3 @@
-// COMPLETA
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -19,11 +17,11 @@ const SignUpScreen = () => {
     const hasLowercase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     const hasMinimumLength = password.length >= 8;
-  
+
     if (!hasUppercase || !hasLowercase || !hasNumber || !hasMinimumLength) {
       return 'A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula e um número.';
     }
-  
+
     return ''; // Retorna vazio se não houver erro
   };
 
@@ -32,6 +30,11 @@ const SignUpScreen = () => {
 
     if (!email || !password || !confirmPassword) {
       setErrorMessage('Todos os campos são obrigatórios.');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      setErrorMessage('E-mail inválido.');
       return;
     }
 
@@ -48,15 +51,32 @@ const SignUpScreen = () => {
 
     setLoading(true);
 
-    // Inserindo na tabela 'usuario'
-    const { data, error } = await supabase
+    // Verificar se o e-mail já existe no banco de dados
+    const { data: existingUser, error: fetchError } = await supabase
       .from('usuario') // Nome da tabela no banco de dados
-      .insert([{ email, senha: password }])
-      .select();
+      .select('email')
+      .eq('email', email);
+
+    if (fetchError) {
+      setLoading(false);
+      setErrorMessage('Erro ao verificar o e-mail. Por favor, tente novamente.');
+      return;
+    }
+
+    if (existingUser && existingUser.length > 0) {
+      setLoading(false);
+      setErrorMessage('E-mail inserido já possui cadastro.');
+      return;
+    }
+
+    // Inserindo na tabela 'usuario'
+    const { error: insertError } = await supabase
+      .from('usuario')
+      .insert([{ email, senha: password }]);
 
     setLoading(false);
 
-    if (error) {
+    if (insertError) {
       setErrorMessage('Erro ao registrar. Tente novamente.');
     } else {
       setErrorMessage(''); // Limpa mensagem de erro em caso de sucesso

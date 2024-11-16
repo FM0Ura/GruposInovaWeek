@@ -24,9 +24,9 @@ export default function ExploreScreen() {
 
       {/* Buttons */}
       <TouchableOpacity style={styles.signInButton} onPress={() => router.push('/login')}>
-        <Text style={styles.signInText}>Sign In</Text>
+        <Text style={styles.signInText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.createAccountButton}>
+      <TouchableOpacity style={styles.createAccountButton} onPress={() => router.push('/register')}>
         <Text style={styles.createAccountText}>Create account</Text>
       </TouchableOpacity>
     </View>

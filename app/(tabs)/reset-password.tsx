@@ -126,6 +126,17 @@ const ResetPasswordScreen = () => {
       {errorMessage !== '' && (
         <Text style={styles.errorText}>{errorMessage}</Text>
       )}
+
+            {/* Redirect to Log in */}
+            <Text style={styles.footerText}>
+        Lembrou sua senha? Ótimo! Então faça{' '}
+        <Text
+          style={styles.footerLink}
+          onPress={() => router.push('/login')} // Redireciona para a rota /login
+        >
+          Log in
+        </Text>
+      </Text>
     </View>
   );
 };
@@ -206,6 +217,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     textAlign: 'center',
+  },
+  footerText: {
+    color: '#000',
+    marginTop: 20,
+  },
+  footerLink: {
+    color: '#007BFF',
+    fontWeight: 'bold',
   },
 });
 
