@@ -34,7 +34,7 @@ const LoginScreen = () => {
       setErrorMessage('E-mail ou senha incorretos. Por favor, confira e tente novamente.');
     } else {
       setErrorMessage(''); // Limpa mensagem de erro em caso de sucesso
-      router.push('./main'); // Redireciona para a tela principal
+      router.push('./main/main'); // Redireciona para a tela principal
     }
   };
 
