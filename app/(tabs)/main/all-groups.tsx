@@ -1,50 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
-import { supabase } from '@/lib/supabase'; // Certifique-se de configurar o Supabase no seu projeto
+import { supabase } from '@/lib/supabase';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 
-const AllGroupsScreen = () => {
-  const [grupos, setGrupos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [selectedGroup, setSelectedGroup] = useState<any | null>(null); // Estado para armazenar o grupo selecionado
+const HomeScreen = () => {
+  const [topGrupos, setTopGrupos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const router = useRouter(); // Roteador para navegação
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [offset, setOffset] = useState(0);
+  const router = useRouter();
 
-  const LIMIT = 10; // Quantidade de grupos por página
+  useEffect(() => {
+    fetchTopGrupos();
+  }, []);
 
-  const fetchGroups = async () => {
+  const fetchTopGrupos = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('avaliacoes')
       .select('grupo_id, nota, grupos(nome, tema, descricao, alunos(nome, curso))')
       .order('nota', { ascending: false })
-      .range(offset, offset + LIMIT - 1);
+      .range(offset, offset + 9);
 
     if (error) {
       console.error('Erro ao buscar grupos:', error);
     } else {
-      setGrupos((prevGrupos) => [...prevGrupos, ...(data || [])]);
+      setTopGrupos((prevGrupos) => [...prevGrupos, ...(data || [])]);
+      setOffset((prevOffset) => prevOffset + 10);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchGroups();
-  }, [offset]);
-
-  const handleLoadMore = () => {
-    setOffset((prevOffset) => prevOffset + LIMIT);
-  };
-
-  const openGroupDetails = (group: any) => {
+  const handleCardPress = (group: any) => {
     setSelectedGroup(group);
     setModalVisible(true);
   };
 
-  const renderGrupo = ({ item }: { item: any }) => (
-    <TouchableOpacity onPress={() => openGroupDetails(item)} style={styles.card}>
+  const renderGrupo = ({ item }: any) => (
+    <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
       <Text style={styles.groupName}>{item.grupos.nome}</Text>
       <Text style={styles.groupTheme}>Tema: {item.grupos.tema}</Text>
       <Text style={styles.groupNota}>Nota: {item.nota.toFixed(2)}</Text>
@@ -53,31 +48,30 @@ const AllGroupsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Botão Voltar */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.push('./main')}>
-        <Text style={styles.backButtonText}>{"<"} Destaques</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.header}>Todos os Grupos</Text>
+      {/* Cabeçalho de boas-vindas */}
+      <Text style={styles.header}>Seja bem-vindo!</Text>
+      <Text style={styles.subHeader}>Mais destacados!</Text>
 
       {/* Lista de Grupos */}
       <FlatList
-        data={grupos}
+        data={topGrupos}
         renderItem={renderGrupo}
-        keyExtractor={(item) => item.grupo_id.toString()}
-        contentContainerStyle={styles.listContainer}
+        keyExtractor={(item) => item.grupo_id}
+        contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
         ListFooterComponent={
-          !loading && (
-            <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore}>
-              <Text style={styles.loadMoreText}>Carregar mais</Text>
-            </TouchableOpacity>
-          )
+          <TouchableOpacity
+            style={styles.loadMoreButton}
+            onPress={fetchTopGrupos}
+            disabled={loading}
+          >
+            <Text style={styles.loadMoreButtonText}>
+              {loading ? 'Carregando...' : 'Carregar mais'}
+            </Text>
+          </TouchableOpacity>
         }
       />
 
-      {loading && <Text style={styles.loadingText}>Carregando...</Text>}
-
-      {/* Modal de Detalhes */}
+      {/* Modal para detalhes do grupo */}
       {selectedGroup && (
         <Modal
           visible={modalVisible}
@@ -87,12 +81,12 @@ const AllGroupsScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {/* Botão Fechar */}
-              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
                 <Text style={styles.closeButtonText}>X</Text>
               </TouchableOpacity>
-
-              {/* Detalhes do Grupo */}
               <Text style={styles.modalHeader}>{selectedGroup.grupos.nome}</Text>
               <Text style={styles.modalTheme}>Tema: {selectedGroup.grupos.tema}</Text>
               <Text style={styles.modalDescription}>{selectedGroup.grupos.descricao}</Text>
@@ -106,23 +100,19 @@ const AllGroupsScreen = () => {
             </View>
           </View>
         </Modal>
-        
       )}
-            {/* Barra de navegação */}
-            <View style={styles.navBar}>
-  {/* Botão para a página principal */}
-  <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
-    <TabBarIcon name="home" color="#fff" />
-    <Text style={styles.navText}>Home</Text>
-  </TouchableOpacity>
 
-  {/* Botão para a página de todos os grupos */}
-  <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
-    <TabBarIcon name="people" color="#fff" />
-    <Text style={styles.navText}>Grupos</Text>
-  </TouchableOpacity>
-</View>
-
+      {/* Barra de navegação */}
+      <View style={styles.navBar}>
+        <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
+          <TabBarIcon name="home" color="#fff" />
+          <Text style={styles.navText}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
+          <TabBarIcon name="people" color="#fff" />
+          <Text style={styles.navText}>Grupos</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -133,26 +123,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    backgroundColor: '#FF6F61',
-    borderRadius: 8,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
-    marginTop: 60,
     color: '#333',
+    marginBottom: 15,
+  },
+  subHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
   },
   listContainer: {
     paddingBottom: 20,
@@ -183,23 +164,37 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     marginTop: 10,
   },
-  loadMoreButton: {
-    paddingVertical: 15,
+  navBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: 60,
     backgroundColor: '#FF6F61',
+    borderRadius: 15,
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#fff',
+  },
+  loadMoreButton: {
+    backgroundColor: '#FF6F61',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+    marginVertical: 15,
   },
-  loadMoreText: {
+  loadMoreButtonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 10,
   },
   modalContainer: {
     flex: 1,
@@ -208,27 +203,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '90%',
+    width: '80%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
   },
   closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#FF6F61',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf: 'flex-end',
+    padding: 10,
   },
   closeButtonText: {
-    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 16,
+    color: '#FF6F61',
   },
   modalHeader: {
     fontSize: 22,
@@ -262,27 +250,6 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     marginTop: 10,
   },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    backgroundColor: '#FF6F61',
-    borderRadius: 15,
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-  },
-  navItem: {
-    alignItems: 'center', // Centraliza o ícone e o texto
-  },
-  navText: {
-    marginTop: 4, // Espaçamento entre o ícone e o texto
-    fontSize: 12, // Tamanho do texto
-    color: '#fff', // Cor do texto
-  },
-  
 });
 
-export default AllGroupsScreen;
+export default HomeScreen;

@@ -43,19 +43,19 @@ const LoginScreen = () => {
       {/* Header Icon */}
       <View style={styles.iconContainer}>
         <Image
-          source={require('@/assets/images/react-logo.png')} // Substitua pelo caminho correto do ícone
+          source={require('@/assets/images/uvv-logo.png')} // Substitua pelo caminho correto do ícone
           style={styles.icon}
         />
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>Log in</Text>
+      <Text style={styles.title}>Entrar</Text>
 
       {/* Email Input */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Email address"
+          placeholder="E-mail"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
           value={email}
@@ -73,7 +73,7 @@ const LoginScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="Password"
+          placeholder="Senha"
           placeholderTextColor="#aaa"
           secureTextEntry={!showPassword}
           value={password}
@@ -89,12 +89,12 @@ const LoginScreen = () => {
 
       {/* Forgot Password Link */}
       <TouchableOpacity onPress={() => router.push('/reset-password')}>
-        <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
+        <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
       </TouchableOpacity>
 
       {/* Log in Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
-        <Text style={styles.loginButtonText}>{loading ? 'Loading...' : 'Log in'}</Text>
+        <Text style={styles.loginButtonText}>{loading ? 'Carregando...' : 'Entrar'}</Text>
       </TouchableOpacity>
 
       {/* Error Message */}
@@ -104,9 +104,9 @@ const LoginScreen = () => {
 
       {/* Redirect to Sign up */}
       <Text style={styles.footerText}>
-        Don’t have an account?{' '}
+        Não possui uma conta?{' '}
         <Text style={styles.footerLink} onPress={() => router.push('/register')}>
-          Sign up
+          Registre-se
         </Text>
       </Text>
     </View>
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 200,
+    height: 200,
   },
   title: {
     fontSize: 24,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   inputContainer: {
-    width: '100%',
+    width: '20%',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   loginButton: {
-    width: '100%',
+    width: '10%',
     backgroundColor: '#000',
     paddingVertical: 15,
     borderRadius: 8,

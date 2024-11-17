@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingBottom: 20,
+    width: '100%',
   },
   card: {
     backgroundColor: '#f9f9f9',
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '90%',
+    width: '30%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,

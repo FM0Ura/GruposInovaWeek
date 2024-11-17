@@ -89,18 +89,18 @@ const SignUpScreen = () => {
       {/* Header Icon */}
       <View style={styles.iconContainer}>
         <Image
-          source={require('@/assets/images/react-logo.png')} // Substitua pelo caminho correto do ícone
+          source={require('@/assets/images/uvv-logo.png')} // Substitua pelo caminho correto do ícone
           style={styles.icon}
         />
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>Sign up</Text>
+      <Text style={styles.title}>Registro</Text>
 
       {/* Email Input */}
       <TextInput
         style={styles.input}
-        placeholder="example@gmail.com"
+        placeholder="Adicione um e-mail"
         placeholderTextColor="#aaa"
         keyboardType="email-address"
         value={email}
@@ -111,7 +111,7 @@ const SignUpScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="must be 8 characters"
+          placeholder="Crie uma senha"
           placeholderTextColor="#aaa"
           secureTextEntry={!showPassword}
           value={password}
@@ -129,7 +129,7 @@ const SignUpScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="repeat password"
+          placeholder="Confirme a senha"
           placeholderTextColor="#aaa"
           secureTextEntry={!showPassword}
           value={confirmPassword}
@@ -145,7 +145,7 @@ const SignUpScreen = () => {
 
       {/* Sign Up Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleSignUp} disabled={loading}>
-        <Text style={styles.loginButtonText}>{loading ? 'Loading...' : 'Registrar'}</Text>
+        <Text style={styles.loginButtonText}>{loading ? 'Carregando...' : 'Registrar'}</Text>
       </TouchableOpacity>
 
       {/* Error Message */}
@@ -155,12 +155,12 @@ const SignUpScreen = () => {
 
       {/* Redirect to Log in */}
       <Text style={styles.footerText}>
-        Already have an account?{' '}
+        Já possui uma conta?{' '}
         <Text
           style={styles.footerLink}
           onPress={() => router.push('/login')} // Redireciona para a rota /login
         >
-          Log in
+          Entre
         </Text>
       </Text>
     </View>
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 200,
+    height: 200,
   },
   title: {
     fontSize: 24,
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   input: {
-    width: '100%',
+    width: '20%',
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   inputContainer: {
-    width: '100%',
+    width: '20%',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     tintColor: '#aaa',
   },
   loginButton: {
-    width: '100%',
+    width: '10%',
     backgroundColor: '#000',
     paddingVertical: 15,
     borderRadius: 8,
