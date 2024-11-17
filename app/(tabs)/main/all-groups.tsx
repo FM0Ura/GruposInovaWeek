@@ -3,8 +3,9 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import RequireAuth from '@/components/RequireAuth'; // Componente de autenticação
 
-const HomeScreen = () => {
+const AllGroupsScreen = () => {
   const [topGrupos, setTopGrupos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -47,73 +48,74 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Cabeçalho de boas-vindas */}
-      <Text style={styles.header}>Seja bem-vindo!</Text>
-      <Text style={styles.subHeader}>Mais destacados!</Text>
+    <RequireAuth>
+      <View style={styles.container}>
+        {/* Cabeçalho da página */}
+        <Text style={styles.header}>Todos os Grupos</Text>
 
-      {/* Lista de Grupos */}
-      <FlatList
-        data={topGrupos}
-        renderItem={renderGrupo}
-        keyExtractor={(item) => item.grupo_id}
-        contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
-        ListFooterComponent={
-          <TouchableOpacity
-            style={styles.loadMoreButton}
-            onPress={fetchTopGrupos}
-            disabled={loading}
+        {/* Lista de Grupos */}
+        <FlatList
+          data={topGrupos}
+          renderItem={renderGrupo}
+          keyExtractor={(item) => item.grupo_id}
+          contentContainerStyle={[styles.listContainer, { paddingBottom: 100 }]}
+          ListFooterComponent={
+            <TouchableOpacity
+              style={styles.loadMoreButton}
+              onPress={fetchTopGrupos}
+              disabled={loading}
+            >
+              <Text style={styles.loadMoreButtonText}>
+                {loading ? 'Carregando...' : 'Carregar mais'}
+              </Text>
+            </TouchableOpacity>
+          }
+        />
+
+        {/* Modal para detalhes do grupo */}
+        {selectedGroup && (
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
           >
-            <Text style={styles.loadMoreButtonText}>
-              {loading ? 'Carregando...' : 'Carregar mais'}
-            </Text>
-          </TouchableOpacity>
-        }
-      />
-
-      {/* Modal para detalhes do grupo */}
-      {selectedGroup && (
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>X</Text>
-              </TouchableOpacity>
-              <Text style={styles.modalHeader}>{selectedGroup.grupos.nome}</Text>
-              <Text style={styles.modalTheme}>Tema: {selectedGroup.grupos.tema}</Text>
-              <Text style={styles.modalDescription}>{selectedGroup.grupos.descricao}</Text>
-              <Text style={styles.modalMembersHeader}>Integrantes:</Text>
-              {selectedGroup.grupos.alunos.map((aluno: any, index: number) => (
-                <Text key={index} style={styles.modalMember}>
-                  {aluno.nome} - {aluno.curso}
-                </Text>
-              ))}
-              <Text style={styles.modalNota}>Nota: {selectedGroup.nota.toFixed(2)}</Text>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.closeButtonText}>X</Text>
+                </TouchableOpacity>
+                <Text style={styles.modalHeader}>{selectedGroup.grupos.nome}</Text>
+                <Text style={styles.modalTheme}>Tema: {selectedGroup.grupos.tema}</Text>
+                <Text style={styles.modalDescription}>{selectedGroup.grupos.descricao}</Text>
+                <Text style={styles.modalMembersHeader}>Integrantes:</Text>
+                {selectedGroup.grupos.alunos.map((aluno: any, index: number) => (
+                  <Text key={index} style={styles.modalMember}>
+                    {aluno.nome} - {aluno.curso}
+                  </Text>
+                ))}
+                <Text style={styles.modalNota}>Nota: {selectedGroup.nota.toFixed(2)}</Text>
+              </View>
             </View>
-          </View>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
-      {/* Barra de navegação */}
-      <View style={styles.navBar}>
-        <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
-          <TabBarIcon name="home" color="#fff" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
-          <TabBarIcon name="people" color="#fff" />
-          <Text style={styles.navText}>Grupos</Text>
-        </TouchableOpacity>
+        {/* Barra de navegação */}
+        <View style={styles.navBar}>
+          <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
+            <TabBarIcon name="home" color="#fff" />
+            <Text style={styles.navText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
+            <TabBarIcon name="people" color="#fff" />
+            <Text style={styles.navText}>Grupos</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </RequireAuth>
   );
 };
 
@@ -125,12 +127,6 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
-  subHeader: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 15,
@@ -252,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default AllGroupsScreen;

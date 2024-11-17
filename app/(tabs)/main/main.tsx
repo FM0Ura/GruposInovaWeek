@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
-import { supabase } from '@/lib/supabase'; // Certifique-se de configurar o Supabase no seu projeto
-import { TabBarIcon } from '@/components/navigation/TabBarIcon'; // Ícones da barra de navegação
+import { supabase } from '@/lib/supabase';
+import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import RequireAuth from '@/components/RequireAuth'; // Proteção de rota
 
 const HomeScreen = () => {
   const [topGrupos, setTopGrupos] = useState([]);
@@ -11,6 +12,7 @@ const HomeScreen = () => {
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const router = useRouter();
 
+  // Busca os dados dos grupos no Supabase
   useEffect(() => {
     const fetchTopGrupos = async () => {
       setLoading(true);
@@ -45,68 +47,73 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Cabeçalho de boas-vindas */}
-      <Text style={styles.header}>Seja bem-vindo!</Text>
+    <RequireAuth>
+      <View style={styles.container}>
+        {/* Cabeçalho de boas-vindas */}
+        <Text style={styles.header}>Seja bem-vindo!</Text>
 
-      {/* Título de destaques */}
-      <Text style={styles.subHeader}>Mais destacados!</Text>
+        {/* Título de destaques */}
+        <Text style={styles.subHeader}>Mais destacados!</Text>
 
-      {/* Lista de Grupos */}
-      {loading ? (
-        <Text style={styles.loadingText}>Carregando...</Text>
-      ) : (
-        <FlatList
-          data={topGrupos}
-          renderItem={renderGrupo}
-          keyExtractor={(item) => item.grupo_id}
-          contentContainerStyle={styles.listContainer}
-        />
-      )}
+        {/* Lista de Grupos */}
+        {loading ? (
+          <Text style={styles.loadingText}>Carregando...</Text>
+        ) : (
+          <FlatList
+            data={topGrupos}
+            renderItem={renderGrupo}
+            keyExtractor={(item) => item.grupo_id}
+            contentContainerStyle={styles.listContainer}
+          />
+        )}
 
-      {/* Modal para detalhes do grupo */}
-      {selectedGroup && (
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              {/* Botão Fechar */}
-              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButtonText}>X</Text>
-              </TouchableOpacity>
+        {/* Modal para detalhes do grupo */}
+        {selectedGroup && (
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                {/* Botão Fechar */}
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.closeButtonText}>X</Text>
+                </TouchableOpacity>
 
-              {/* Detalhes do Grupo */}
-              <Text style={styles.modalHeader}>{selectedGroup.grupos.nome}</Text>
-              <Text style={styles.modalTheme}>Tema: {selectedGroup.grupos.tema}</Text>
-              <Text style={styles.modalDescription}>{selectedGroup.grupos.descricao}</Text>
-              <Text style={styles.modalMembersHeader}>Integrantes:</Text>
-              {selectedGroup.grupos.alunos.map((aluno: any, index: number) => (
-                <Text key={index} style={styles.modalMember}>
-                  {aluno.nome} - {aluno.curso}
-                </Text>
-              ))}
-              <Text style={styles.modalNota}>Nota: {selectedGroup.nota.toFixed(2)}</Text>
+                {/* Detalhes do Grupo */}
+                <Text style={styles.modalHeader}>{selectedGroup.grupos.nome}</Text>
+                <Text style={styles.modalTheme}>Tema: {selectedGroup.grupos.tema}</Text>
+                <Text style={styles.modalDescription}>{selectedGroup.grupos.descricao}</Text>
+                <Text style={styles.modalMembersHeader}>Integrantes:</Text>
+                {selectedGroup.grupos.alunos.map((aluno: any, index: number) => (
+                  <Text key={index} style={styles.modalMember}>
+                    {aluno.nome} - {aluno.curso}
+                  </Text>
+                ))}
+                <Text style={styles.modalNota}>Nota: {selectedGroup.nota.toFixed(2)}</Text>
+              </View>
             </View>
-          </View>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
-      {/* Barra de navegação */}
-      <View style={styles.navBar}>
-        <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
-          <TabBarIcon name="home" color="#fff" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
-          <TabBarIcon name="people" color="#fff" />
-          <Text style={styles.navText}>Grupos</Text>
-        </TouchableOpacity>
+        {/* Barra de navegação */}
+        <View style={styles.navBar}>
+          <TouchableOpacity onPress={() => router.push('./main')} style={styles.navItem}>
+            <TabBarIcon name="home" color="#fff" />
+            <Text style={styles.navText}>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('./all-groups')} style={styles.navItem}>
+            <TabBarIcon name="people" color="#fff" />
+            <Text style={styles.navText}>Grupos</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </RequireAuth>
   );
 };
 
@@ -130,7 +137,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingBottom: 20,
-    width: '100%',
   },
   card: {
     backgroundColor: '#f9f9f9',
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '30%',
+    width: '90%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
