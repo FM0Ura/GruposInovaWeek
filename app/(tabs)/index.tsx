@@ -1,3 +1,15 @@
+
+
+
+
+
+//  ******LEIA O README DO PROJETO!.**********
+
+
+
+
+
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -20,6 +32,9 @@ export default function ExploreScreen() {
       <Text style={styles.title}>Grupos Inova Week</Text>
       <Text style={styles.subtitle}>
         Confira os grupos que apresentaram no Inova Week 2024 e suas respectivas notas.
+      </Text>
+      <Text style={styles.subtitle}>
+        LEIA O README DO PROJETO!.
       </Text>
 
       {/* Buttons */}

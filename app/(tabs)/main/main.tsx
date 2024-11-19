@@ -1,3 +1,16 @@
+
+
+
+
+
+//  ******LEIA O README DO PROJETO!.**********
+
+
+
+
+
+
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
