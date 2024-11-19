@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase'; // Certifique-se de configurar o Supabase no seu projeto
 
+export let logado = false;
+
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +36,7 @@ const LoginScreen = () => {
       setErrorMessage('E-mail ou senha incorretos. Por favor, confira e tente novamente.');
     } else {
       setErrorMessage(''); // Limpa mensagem de erro em caso de sucesso
+      logado = true;
       router.push('./main/main'); // Redireciona para a tela principal
     }
   };
@@ -198,3 +201,4 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+

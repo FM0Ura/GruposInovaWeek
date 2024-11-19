@@ -68,13 +68,13 @@ const ResetPasswordScreen = () => {
     <View style={styles.container}>
 
       {/* Title and Description */}
-      <Text style={styles.title}>Reset password</Text>
-      <Text style={styles.description}>Please type something you’ll remember</Text>
+      <Text style={styles.title}>Alterar Senhas</Text>
+      <Text style={styles.description}>Escreva algo que você irá se lembrar</Text>
 
       {/* Email Input */}
       <TextInput
         style={styles.input}
-        placeholder="Enter your email address"
+        placeholder="Email cadastrado"
         placeholderTextColor="#aaa"
         keyboardType="email-address"
         value={email}
@@ -85,7 +85,7 @@ const ResetPasswordScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="must be 8 characters"
+          placeholder="Sua nova senha"
           placeholderTextColor="#aaa"
           secureTextEntry={!showPassword}
           value={newPassword}
@@ -103,7 +103,7 @@ const ResetPasswordScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.passwordInput}
-          placeholder="repeat password"
+          placeholder="Confirme seua nova senha"
           placeholderTextColor="#aaa"
           secureTextEntry={!showPassword}
           value={confirmPassword}
@@ -119,7 +119,7 @@ const ResetPasswordScreen = () => {
 
       {/* Reset Password Button */}
       <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword} disabled={loading}>
-        <Text style={styles.resetButtonText}>{loading ? 'Loading...' : 'Reset password'}</Text>
+        <Text style={styles.resetButtonText}>{loading ? 'Loading...' : 'Alterar senha'}</Text>
       </TouchableOpacity>
 
       {/* Error Message */}

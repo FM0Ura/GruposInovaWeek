@@ -3,14 +3,16 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import RequireAuth from '@/components/RequireAuth'; // Proteção de rota
+import {logado} from '../login';
+
 
 const HomeScreen = () => {
+  const router = useRouter();
+if(logado){
   const [topGrupos, setTopGrupos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
-  const router = useRouter();
 
   // Busca os dados dos grupos no Supabase
   useEffect(() => {
@@ -47,7 +49,6 @@ const HomeScreen = () => {
   );
 
   return (
-    <RequireAuth>
       <View style={styles.container}>
         {/* Cabeçalho de boas-vindas */}
         <Text style={styles.header}>Seja bem-vindo!</Text>
@@ -113,21 +114,77 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </RequireAuth>
   );
-};
+} else {
+  return (
+    <View style={styles.container1}>
+      <View style={styles.box}>
+        <Text style={styles.header}>Seja bem-vindo!</Text>
+        <Text style={styles.message}>Você não está logado!</Text>
+        <Text style={styles.message}>Faça login para acessar esta página!</Text>
 
+        {/* Botão para redirecionar */}
+        <TouchableOpacity style={styles.loginButton} onPress={() => router.push('/login')}>
+          <Text style={styles.loginButtonText}>Ir para Login</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+}
 const styles = StyleSheet.create({
+  box: {
+    width: '90%',
+    maxWidth: 400,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  message: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  container1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  loginButton: {
+    marginTop: 20,
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
   },
   subHeader: {
     fontSize: 18,
